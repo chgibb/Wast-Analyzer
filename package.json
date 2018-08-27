@@ -1,0 +1,27 @@
+{
+  "name": "wast-analyzer",
+  "version": "1.0.0",
+  "description": "WIP",
+  "main": "index.js",
+  "scripts": {
+    "test": "bash scripts/test.bash"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chgibb/wast-analyzer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chgibb/wast-analyzer/issues"
+  },
+  "homepage": "https://github.com/chgibb/wast-analyzer#readme",
+  "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "@types/node": "^10.9.2",
+    "jest": "^23.5.0",
+    "sexpr-plus": "^7.0.0",
+    "typescript": "^3.0.1",
+    "wabt": "git+https://github.com/AssemblyScript/wabt.js.git"
+  }
+}
