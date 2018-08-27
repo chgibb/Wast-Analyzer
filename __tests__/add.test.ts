@@ -16,4 +16,6 @@ it(`should parse sections`,() => {
     expect(res.nameSection.contents.length).toBe(24);
 
     expect(res.nameSection.determineNumberOfFunctions()).toBe(1);
+
+    console.log(res.nameSection.findFunctionEntries());
 });
