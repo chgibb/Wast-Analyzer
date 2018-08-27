@@ -17,5 +17,12 @@ it(`should parse sections`,() => {
 
     expect(res.nameSection.determineNumberOfFunctions()).toBe(2);
 
-    console.log(res.nameSection.findFunctionEntries());
+    let functions = res.nameSection.findFunctionEntries();
+    expect(functions.length).toBe(2);
+
+    expect(functions[0].name).toBe("addTowNumbersTogetherReallyLongFuncName");
+    expect(functions[0].index).toBe(0);
+
+    expect(functions[1].name).toBe("sub");
+    expect(functions[1].index).toBe(1);
 });
