@@ -5,7 +5,8 @@ export enum PrimitiveTypes
     i32 = 1,
     i64 = 2,
     f32 = 3,
-    f64 = 4
+    f64 = 4,
+    voidType = 5
 }
 
 export class FunctionType

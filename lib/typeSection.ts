@@ -20,52 +20,78 @@ export class TypeSection implements Section
                 i++;
                 let numParameters = hexToDec(this.contents[i].split(/\s/)[1]);
 
-                while(entry.parameters.length != numParameters)
+                //no parameters
+                if(numParameters == 0)
                 {
-                    if(/; i32/.test(this.contents[i]))
-                    {
-                        entry.parameters.push(PrimitiveTypes.i32);
-                    }
-
-                    else if(/; i64/.test(this.contents[i]))
-                    {
-                        entry.parameters.push(PrimitiveTypes.i64);
-                    }
-
-                    else if(/; f32/.test(this.contents[i]))
-                    {
-                        entry.parameters.push(PrimitiveTypes.f32);
-                    }
-
-                    else if(/; f64/.test(this.contents[i]))
-                    {
-                        entry.parameters.push(PrimitiveTypes.f64);
-                    }
-
+                    entry.parameters.push(PrimitiveTypes.voidType);
                     i++;
+                }
+
+                else
+                {
+                    while(entry.parameters.length != numParameters)
+                    {
+                        if(/; i32/.test(this.contents[i]))
+                        {
+                            entry.parameters.push(PrimitiveTypes.i32);
+                        }
+
+                        else if(/; i64/.test(this.contents[i]))
+                        {
+                            entry.parameters.push(PrimitiveTypes.i64);
+                        }
+
+                        else if(/; f32/.test(this.contents[i]))
+                        {
+                            entry.parameters.push(PrimitiveTypes.f32);
+                        }
+
+                        else if(/; f64/.test(this.contents[i]))
+                        {
+                            entry.parameters.push(PrimitiveTypes.f64);
+                        }
+
+                        i++;
+                    }
                 }
 
                 if(/; num results/.test(this.contents[i]))
                 {
-                    i++;
-                    if(/; i32/.test(this.contents[i]))
+                    //no return values
+                    let numResults = hexToDec(this.contents[i].split(/\s/)[1]);
+                    if(numResults == 0)
                     {
-                        entry.result = PrimitiveTypes.i32;
+                        entry.result = PrimitiveTypes.voidType;
                     }
 
-                    else if(/; i64/.test(this.contents[i]))
+                    else if(numResults != 0)
                     {
-                        entry.result = PrimitiveTypes.i64;
-                    }
 
-                    else if(/; f32/.test(this.contents[i]))
-                    {
-                        entry.result = PrimitiveTypes.f32;
-                    }
+                        if(numResults != 1)
+                        {
+                            throw new Error(`Multiple returns not supported. Function type signature ${entry.typeIndex} declared ${numResults} returns`);
+                        }
 
-                    else if(/; f64/.test(this.contents[i]))
-                    {
-                        entry.result = PrimitiveTypes.f64;
+                        i++;
+                        if(/; i32/.test(this.contents[i]))
+                        {
+                            entry.result = PrimitiveTypes.i32;
+                        }
+
+                        else if(/; i64/.test(this.contents[i]))
+                        {
+                            entry.result = PrimitiveTypes.i64;
+                        }
+
+                        else if(/; f32/.test(this.contents[i]))
+                        {
+                            entry.result = PrimitiveTypes.f32;
+                        }
+
+                        else if(/; f64/.test(this.contents[i]))
+                        {
+                            entry.result = PrimitiveTypes.f64;
+                        }
                     }
                 }
                 res.push(entry);
