@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 import {disassembleWat} from "./../lib/disassemble";
 import {parseSections} from "./../lib/parseSections";
-import {PrimitiveTypes, linkFunctionTypesToFunctions} from "../lib/functionEntry";
+import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions} from "../lib/functionEntry";
 
 it(`should parse sections`,() => {
     let dump = disassembleWat(fs.readFileSync("__tests__/add.wat").toString());
@@ -16,6 +16,7 @@ it(`should parse sections`,() => {
     expect(res.exportSection.contents.length).toBe(8);
     expect(res.nameSection.contents.length).toBe(24);
 
+
     expect(res.nameSection.determineNumberOfFunctions()).toBe(1);
 
     let types = res.typeSection.findFunctionTypes();
@@ -24,12 +25,19 @@ it(`should parse sections`,() => {
     expect(types[0].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(types[0].result).toEqual(PrimitiveTypes.i32);
 
+    let typeIndexes = res.functionSection.getFunctionIndexesWithTypeIndexes();
+    expect(typeIndexes.length).toBe(1);
+    expect(typeIndexes[0].functionIndex).toBe(0);
+    expect(typeIndexes[0].typeIndex).toBe(0);
+
     let functions = res.nameSection.findFunctionEntries();
+    linkTypeIndexesToFunctions(functions,typeIndexes);
     linkFunctionTypesToFunctions(functions,types);
     expect(functions.length).toBe(1);
 
     expect(functions[0].name).toBe("add");
     expect(functions[0].functionIndex).toBe(0);
+    expect(functions[0].typeIndex).toBe(0);
     expect(functions[0].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(functions[0].type!.result).toBe(PrimitiveTypes.i32);
 });

@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 import {disassembleWat} from "./../lib/disassemble";
 import {parseSections} from "./../lib/parseSections";
-import {PrimitiveTypes, linkFunctionTypesToFunctions} from "../lib/functionEntry";
+import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions} from "../lib/functionEntry";
 
 it(`should parse sections`,() => {
     let dump = disassembleWat(fs.readFileSync("__tests__/addInc.wat").toString());
@@ -28,7 +28,10 @@ it(`should parse sections`,() => {
     expect(types[1].parameters).toEqual([PrimitiveTypes.i32]);
     expect(types[1].result).toEqual(PrimitiveTypes.i32);
 
+    let typeIndexes = res.functionSection.getFunctionIndexesWithTypeIndexes();
+
     let functions = res.nameSection.findFunctionEntries();
+    linkTypeIndexesToFunctions(functions,typeIndexes);
     linkFunctionTypesToFunctions(functions,types);
     expect(functions.length).toBe(2);
 
