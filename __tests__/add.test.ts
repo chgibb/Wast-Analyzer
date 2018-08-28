@@ -43,6 +43,7 @@ it(`should parse sections`,() => {
 
     let bodies = res.codeSection.getFunctionBodies();
     linkFunctionBodiesToFunctions(functions,bodies);
+    
     expect(functions[0].body).toEqual(
 `0000021: 00                                        ; func body size (guess)
 0000022: 00                                        ; local decl count
