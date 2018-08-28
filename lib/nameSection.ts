@@ -41,8 +41,17 @@ export class NameSection implements Section
                         let potentialOctets = this.contents[i].split(/\s/);
                         for(let k = 0; k != potentialOctets.length; ++k)
                         {
-                            if(isHexTwoOrFourOctet(potentialOctets[k]))
-                                entry.name += hexToASCII(potentialOctets[k]);
+                            if(k == 0 || k == 1)
+                            {
+                                if(isHexTwoOrFourOctet(potentialOctets[k]))
+                                    entry.name += hexToASCII(potentialOctets[k]);
+                            }
+                            
+                            else if(k > 1)
+                            {
+                                if(isHexTwoOrFourOctet(potentialOctets[k]) && isHexTwoOrFourOctet(potentialOctets[k - 1]))
+                                    entry.name += hexToASCII(potentialOctets[k]);
+                            }
                         }
                     }
                     res.push(entry);
