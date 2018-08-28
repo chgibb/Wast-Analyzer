@@ -1,4 +1,5 @@
 import {FunctionIndexWithTypeIndex} from "./functionSection";
+import {FunctionIndexWithFunctionBody} from "./codeSection";
 
 export enum PrimitiveTypes
 {
@@ -22,6 +23,7 @@ export class FunctionEntry
     public typeIndex : number | undefined;
     public name : string | undefined;
     public type : FunctionType | undefined;
+    public body : Array<string> = new Array<string>();
 }
 
 export function linkTypeIndexesToFunctions(functions : Array<FunctionEntry>,indexes : Array<FunctionIndexWithTypeIndex>) : void
@@ -48,6 +50,21 @@ export function linkFunctionTypesToFunctions(functions : Array<FunctionEntry>,ty
             if(types[k].typeIndex == functions[i].typeIndex)
             {
                 functions[i].type = types[k];
+                break;
+            }
+        }
+    }
+}
+
+export function linkFunctionBodiesToFunctions(functions : Array<FunctionEntry>,bodies : Array<FunctionIndexWithFunctionBody>) : void
+{
+    for(let i = 0; i != functions.length; ++i)
+    {
+        for(let k = 0; k != bodies.length; ++k)
+        {
+            if(bodies[k].functionIndex == functions[i].functionIndex)
+            {
+                functions[i].body = bodies[k].functionBody;
                 break;
             }
         }
