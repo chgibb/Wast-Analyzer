@@ -4,6 +4,7 @@ import * as fs from "fs";
 
 import {disassembleWat} from "../lib/disassemble";
 import {parseSections} from "../lib/parseSections";
+import {PrimitiveTypes, linkFunctionTypesToFunctions} from "../lib/functionEntry";
 
 it(`should parse sections`,() => {
     let dump = disassembleWat(fs.readFileSync("__tests__/addSubSuperLongFuncName.wat").toString());
@@ -17,12 +18,23 @@ it(`should parse sections`,() => {
 
     expect(res.nameSection.determineNumberOfFunctions()).toBe(2);
 
+    let types = res.typeSection.findFunctionTypes();
+    expect(types.length).toBe(1);
+    expect(types[0].typeIndex).toBe(0);
+    expect(types[0].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
+    expect(types[0].result).toEqual(PrimitiveTypes.i32);
+
     let functions = res.nameSection.findFunctionEntries();
+    linkFunctionTypesToFunctions(functions,types);
     expect(functions.length).toBe(2);
 
     expect(functions[0].name).toBe("addTowNumbersTogetherReallyLongFuncName");
-    expect(functions[0].index).toBe(0);
+    expect(functions[0].functionIndex).toBe(0);
+    expect(functions[0].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
+    expect(functions[0].type!.result).toBe(PrimitiveTypes.i32);
 
     expect(functions[1].name).toBe("sub");
-    expect(functions[1].index).toBe(1);
+    expect(functions[1].functionIndex).toBe(1);
+    expect(functions[1].type!.parameters).toEqual([PrimitiveTypes.i32]);
+    expect(functions[1].type!.result).toBe(PrimitiveTypes.i32);
 });

@@ -29,7 +29,7 @@ export class NameSection implements Section
             if(/; function index/.test(this.contents[i]))
             {
                 let entry : FunctionEntry = new FunctionEntry();
-                entry.index = hexToDec(this.contents[i].split(/\s/)[1]);
+                entry.functionIndex = hexToDec(this.contents[i].split(/\s/)[1]);
                 i++;
                 if(/; string length/.test(this.contents[i]))
                 {
