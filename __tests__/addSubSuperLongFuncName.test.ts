@@ -16,7 +16,11 @@ it(`should parse sections`,() => {
     expect(res.exportSection.contents.length).toBe(8);
     expect(res.nameSection.contents.length).toBe(37);
 
-    expect(res.nameSection.determineNumberOfFunctions()).toBe(2);
+    let numImports = res.importSection.getNumberOfImports();
+    expect(numImports).toBe(0);
+
+    let functions = res.functionSection.getFunctionsWithTypeIndexes();
+    expect(functions.length).toBe(2);
 
     let types = res.typeSection.findFunctionTypes();
     expect(types.length).toBe(1);
@@ -24,12 +28,8 @@ it(`should parse sections`,() => {
     expect(types[0].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(types[0].result).toEqual(PrimitiveTypes.i32);
 
-    let typeIndexes = res.functionSection.getFunctionIndexesWithTypeIndexes();
-
-    let functions = res.nameSection.findFunctionEntries();
-    linkTypeIndexesToFunctions(functions,typeIndexes);
     linkFunctionTypesToFunctions(functions,types);
-    expect(functions.length).toBe(2);
+    res.nameSection.nameFunctions(functions,numImports);
 
     expect(functions[0].name).toBe("addTowNumbersTogetherReallyLongFuncName");
     expect(functions[0].functionIndex).toBe(0);
@@ -44,7 +44,7 @@ it(`should parse sections`,() => {
     expect(functions[1].type!.result).toBe(PrimitiveTypes.i32);
 
     let bodies = res.codeSection.getFunctionBodies();
-    linkFunctionBodiesToFunctions(functions,bodies);
+    linkFunctionBodiesToFunctions(functions,bodies,numImports);
 
     expect(functions[0].body).toEqual(
 `0000026: 00                                        ; func body size (guess)

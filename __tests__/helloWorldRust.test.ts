@@ -4,13 +4,13 @@ import * as fs from "fs";
 
 import {disassembleWat} from "./../lib/disassemble";
 import {parseSections} from "./../lib/parseSections";
-import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions} from "../lib/functionEntry";
+import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions,linkFunctionBodiesToFunctions} from "../lib/functionEntry";
 
 it(`should parse sections`,() => {
     let dump = disassembleWat(fs.readFileSync("__tests__/helloWorldRust.wat").toString());
     fs.writeFileSync("__tests__/helloWorldRust.wat.dump",dump);
     let res = parseSections(dump);
-    expect(res.typeSection.contents.length).toBe(83);
+    expect(res.typeSection.contents.length).toBe(61);
     expect(res.functionSection.contents.length).toBe(65);
     expect(res.codeSection.contents.length).toBe(12059);
     expect(res.exportSection.contents.length).toBe(41);
@@ -43,13 +43,15 @@ it(`should parse sections`,() => {
     expect(types[7].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(types[7].result).toBe(PrimitiveTypes.voidType);
 
+    let functions = res.functionSection.getFunctionsWithTypeIndexes();
+    expect(functions.length).toBe(33);
 
-    let typeIndexes = res.functionSection.getFunctionIndexesWithTypeIndexes();
-    let functions = res.nameSection.findFunctionEntries();
-    linkTypeIndexesToFunctions(functions,typeIndexes);
     linkFunctionTypesToFunctions(functions,types);
 
-    expect(functions.length).toBe(35);
+    let bodies = res.codeSection.getFunctionBodies();
+    linkFunctionBodiesToFunctions(functions,bodies,res.importSection.getNumberOfImports());
+
+    res.nameSection.nameFunctions(functions,res.importSection.getNumberOfImports());
 
     expect(functions[0].name).toBe("__wbg_f_alert_alert_n");
     expect(functions[0].typeIndex).toBe(2);
@@ -98,6 +100,13 @@ it(`should parse sections`,() => {
     expect(functions[7].functionIndex).toBe(7);
     expect(functions[7].type!.parameters).toEqual([PrimitiveTypes.voidType]);
     expect(functions[7].type!.result).toBe(PrimitiveTypes.voidType);
+    expect(functions[7].body).toEqual(
+`0001973: 00                                        ; func body size (guess)
+0001974: 00                                        ; local decl count
+0001975: 00                                        ; unreachable
+0001976: 00                                        ; unreachable
+0001977: 0b                                        ; end
+0001973: 04                                        ; FIXUP func body size`.split("\n"));
     
     expect(functions[8].name).toBe("core::result::unwrap_failed::ha655e72972fab217");
     expect(functions[8].typeIndex).toBe(4);
@@ -249,12 +258,12 @@ it(`should parse sections`,() => {
     expect(functions[32].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(functions[32].type!.result).toBe(PrimitiveTypes.i32);
 
-    expect(functions[33].name).toBe("core::fmt::Formatter::pad_integral::__closure__::h94fc5aab011b1f92");
+    /*expect(functions[33].name).toBe("core::fmt::Formatter::pad_integral::__closure__::h94fc5aab011b1f92");
     expect(functions[33].functionIndex).toBe(33);
 
 
     expect(functions[34].name).toBe("memcpy");
-    expect(functions[34].functionIndex).toBe(34);
+    expect(functions[34].functionIndex).toBe(34);*/
 
 
 });

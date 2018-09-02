@@ -56,17 +56,29 @@ export function linkFunctionTypesToFunctions(functions : Array<FunctionEntry>,ty
     }
 }
 
-export function linkFunctionBodiesToFunctions(functions : Array<FunctionEntry>,bodies : Array<FunctionIndexWithFunctionBody>) : void
+export function linkFunctionBodiesToFunctions(functions : Array<FunctionEntry>,bodies : Array<FunctionIndexWithFunctionBody>,numImports : number) : void
 {
     for(let i = 0; i != functions.length; ++i)
     {
         for(let k = 0; k != bodies.length; ++k)
         {
-            if(bodies[k].functionIndex == functions[i].functionIndex)
+            if(bodies[k].functionIndex == functions[i].functionIndex! - numImports)
             {
                 functions[i].body = bodies[k].functionBody;
                 break;
             }
         }
     }
+}
+
+export function getFunctionByFunctionIndex(functions : Array<FunctionEntry>,index : number) : FunctionEntry | undefined
+{
+    for(let i = 0; i != functions.length; ++i)
+    {
+        if(functions[i].functionIndex == index)
+        {
+            return functions[i];
+        }
+    }
+    return undefined;
 }

@@ -3,6 +3,7 @@ import {FunctionSection} from "./functionSection";
 import {ExportSection} from "./exportSection";
 import {CodeSection} from "./codeSection";
 import {NameSection} from "./nameSection";
+import {ImportSection} from "./importSection";
 
 enum CurrentSection
 {
@@ -10,7 +11,8 @@ enum CurrentSection
     func = 1,
     exp = 2,
     code = 3,
-    name = 4
+    name = 4,
+    imp = 5
 }
 
 export class ParsedSections
@@ -20,6 +22,7 @@ export class ParsedSections
     public exportSection : ExportSection = new ExportSection();
     public codeSection : CodeSection = new CodeSection();
     public nameSection : NameSection = new NameSection();
+    public importSection : ImportSection = new ImportSection();
 }
 
 export function parseSections(dis : string) : ParsedSections
@@ -60,6 +63,12 @@ export function parseSections(dis : string) : ParsedSections
             continue;
         }
 
+        if(/; section "Import"/.test(lines[i]))
+        {
+            currentSection = CurrentSection.imp;
+            continue;
+        }
+
         switch(currentSection)
         {
             case CurrentSection.type:
@@ -81,6 +90,10 @@ export function parseSections(dis : string) : ParsedSections
             case CurrentSection.name:
                 if(lines[i])
                     res.nameSection.contents.push(lines[i]);
+            break;
+            case CurrentSection.imp:
+                if(lines[i])
+                    res.importSection.contents.push(lines[i]);
             break;
         }
     }

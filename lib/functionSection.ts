@@ -1,5 +1,6 @@
 import {Section} from "./section";
 import {hexToDec} from "./hexToDec";
+import {FunctionEntry} from "./functionEntry";
 
 export class FunctionIndexWithTypeIndex
 {
@@ -11,9 +12,9 @@ export class FunctionSection implements Section
 {
     public contents : Array<string> = new Array<string>();
 
-    public getFunctionIndexesWithTypeIndexes() : Array<FunctionIndexWithTypeIndex>
+    public getFunctionsWithTypeIndexes() : Array<FunctionEntry>
     {
-        let res : Array<FunctionIndexWithTypeIndex> = new Array<FunctionIndexWithTypeIndex>();
+        let res : Array<FunctionEntry> = new Array<FunctionEntry>();
 
         for(let i = 0; i != this.contents.length; ++i)
         {
@@ -21,7 +22,7 @@ export class FunctionSection implements Section
             {
                 let comp = this.contents[i].split(/\s/);
   
-                let entry = new FunctionIndexWithTypeIndex();
+                let entry = new FunctionEntry();
 
                 if(comp[1] == "00")
                     entry.typeIndex = 0;
