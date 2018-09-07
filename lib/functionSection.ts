@@ -12,7 +12,7 @@ export class FunctionSection implements Section
 {
     public contents : Array<string> = new Array<string>();
 
-    public getFunctionsWithTypeIndexes() : Array<FunctionEntry>
+    public initializeInternalFunctionSpace() : Array<FunctionEntry>
     {
         let res : Array<FunctionEntry> = new Array<FunctionEntry>();
 
@@ -30,6 +30,7 @@ export class FunctionSection implements Section
                     entry.typeIndex = hexToDec(comp[1]);
                     
                 entry.functionIndex = parseInt(comp[comp.length-3]);
+
                 res.push(entry);
             }
         }

@@ -1,6 +1,6 @@
 import {Section} from "./section";
 import {hexToDec} from "./hexToDec";
-import {FunctionEntry,getFunctionByFunctionIndex} from "./functionEntry";
+import {getFunctionByFunctionIndexOffsetByImportSpace, FunctionSpace} from "./functionEntry";
 import {isHexTwoOrFourOctet} from "./hexOctet";
 import {hexToASCII} from "./hexToASCII";
 
@@ -8,7 +8,7 @@ export class NameSection implements Section
 {
     public contents : Array<string> = new Array<string>();
 
-    public nameFunctions(functions : Array<FunctionEntry>,numImports : number) : void
+    public nameFunctions(space : FunctionSpace) : void
     {
         for(let i = 0; i != this.contents.length; ++i)
         {
@@ -39,7 +39,8 @@ export class NameSection implements Section
                             }
                         }
                     }
-                    let entry = getFunctionByFunctionIndex(functions,functionIndex);
+
+                    let entry = getFunctionByFunctionIndexOffsetByImportSpace(space,functionIndex);
                     if(entry)
                         entry.name = name;
                 }

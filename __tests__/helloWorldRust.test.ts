@@ -15,8 +15,9 @@ it(`should parse sections`,() => {
     expect(res.codeSection.contents.length).toBe(12059);
     expect(res.exportSection.contents.length).toBe(41);
     expect(res.nameSection.contents.length).toBe(771);
-
+/*
     let types = res.typeSection.findFunctionTypes();
+    let numImports = res.importSection.getNumberOfImports();
   
     expect(types.length).toBe(8);
     expect(types[0].parameters).toEqual([PrimitiveTypes.voidType]);
@@ -43,17 +44,19 @@ it(`should parse sections`,() => {
     expect(types[7].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(types[7].result).toBe(PrimitiveTypes.voidType);
 
-    let functions = res.functionSection.getFunctionsWithTypeIndexes();
+    let functions = res.functionSection.getFunctionsWithTypeIndexes(numImports);
     expect(functions.length).toBe(33);
 
     linkFunctionTypesToFunctions(functions,types);
 
     let bodies = res.codeSection.getFunctionBodies();
-    linkFunctionBodiesToFunctions(functions,bodies,res.importSection.getNumberOfImports());
+    //linkFunctionBodiesToFunctions(functions,bodies,numImports);
 
-    res.nameSection.nameFunctions(functions,res.importSection.getNumberOfImports());
+    res.nameSection.nameFunctions(functions,numImports);
 
-    expect(functions[0].name).toBe("__wbg_f_alert_alert_n");
+    fs.writeFileSync("__tests__/helloWorldRust.wat.json",JSON.stringify(functions,undefined,4));
+
+    /*expect(functions[0].name).toBe("__wbg_f_alert_alert_n");
     expect(functions[0].typeIndex).toBe(2);
     expect(functions[0].functionIndex).toBe(0);
     expect(functions[0].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
@@ -63,9 +66,9 @@ it(`should parse sections`,() => {
     expect(functions[1].typeIndex).toBe(3);
     expect(functions[1].functionIndex).toBe(1);
     expect(functions[1].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
-    expect(functions[1].type!.result).toBe(PrimitiveTypes.i32);
+    expect(functions[1].type!.result).toBe(PrimitiveTypes.i32);*/
 
-    expect(functions[2].name).toBe("greet");
+   /* expect(functions[2].name).toBe("greet");
     expect(functions[2].typeIndex).toBe(4);
     expect(functions[2].functionIndex).toBe(2);
     expect(functions[2].type!.parameters).toEqual([PrimitiveTypes.i32]);

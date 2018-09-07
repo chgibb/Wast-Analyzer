@@ -1,3 +1,4 @@
 node_modules
 *.js
 *.dump
+__tests__/*.json

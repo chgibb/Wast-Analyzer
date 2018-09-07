@@ -26,6 +26,24 @@ export class FunctionEntry
     public body : Array<string> = new Array<string>();
 }
 
+export class ImportedFunctionEntry extends FunctionEntry
+{
+
+}
+
+export class FunctionSpace
+{
+    public imported : Array<ImportedFunctionEntry> = new Array<ImportedFunctionEntry>();
+    public internal : Array<FunctionEntry> = new Array<FunctionEntry>();
+    public constructor(
+        internal : Array<FunctionEntry>,
+        imported : Array<ImportedFunctionEntry>
+    ) {
+        this.internal = internal;
+        this.imported = imported;
+    }
+}
+
 export function linkTypeIndexesToFunctions(functions : Array<FunctionEntry>,indexes : Array<FunctionIndexWithTypeIndex>) : void
 {
     for(let i = 0; i != functions.length; ++i)
@@ -56,28 +74,39 @@ export function linkFunctionTypesToFunctions(functions : Array<FunctionEntry>,ty
     }
 }
 
-export function linkFunctionBodiesToFunctions(functions : Array<FunctionEntry>,bodies : Array<FunctionIndexWithFunctionBody>,numImports : number) : void
+export function linkFunctionBodiesToFunctions(space : FunctionSpace,bodies : Array<FunctionIndexWithFunctionBody>) : void
 {
-    for(let i = 0; i != functions.length; ++i)
+    for(let i = 0; i != space.internal.length; ++i)
     {
         for(let k = 0; k != bodies.length; ++k)
         {
-            if(bodies[k].functionIndex == functions[i].functionIndex! - numImports)
+            if(space.internal[i].functionIndex == bodies[i].functionIndex)
             {
-                functions[i].body = bodies[k].functionBody;
+                space.internal[i].body = bodies[i].functionBody;
                 break;
             }
         }
     }
+
 }
 
-export function getFunctionByFunctionIndex(functions : Array<FunctionEntry>,index : number) : FunctionEntry | undefined
+export function getFunctionByFunctionIndexOffsetByImportSpace(space : FunctionSpace,index : number) : FunctionEntry | undefined
 {
-    for(let i = 0; i != functions.length; ++i)
+    if(index >= 0 && index <= space.imported.length - 1)
     {
-        if(functions[i].functionIndex == index)
+        for(let i = 0; i != space.imported.length; ++i)
         {
-            return functions[i];
+            if(space.imported[i].functionIndex == index)
+                return space.imported[i];
+        }
+    }
+
+    else
+    {
+        for(let i = 0; i != space.internal.length; ++i)
+        {
+            if(space.internal[i].functionIndex! + space.imported.length == index)
+                return space.internal[i];
         }
     }
     return undefined;
