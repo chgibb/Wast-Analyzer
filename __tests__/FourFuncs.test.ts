@@ -11,7 +11,10 @@ it(`should parse sections`,() => {
     fs.writeFileSync("__tests__/FourFuncs.wat.dump",dump);
     let res = parseSections(dump);
 
-    let functions : FunctionSpace = new FunctionSpace(res.functionSection.initializeInternalFunctionSpace(),res.importSection.initializeImportedFunctionSpace());
+    let functions : FunctionSpace = new FunctionSpace(
+        res.functionSection.initializeInternalFunctionSpace(),
+        res.importSection.initializeImportedFunctionSpace()
+    );
 
     expect(functions.internal.length).toBe(3);
     expect(functions.imported.length).toBe(1);

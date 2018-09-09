@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 import {disassembleWat} from "./../lib/disassemble";
 import {parseSections} from "./../lib/parseSections";
-import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions, linkFunctionBodiesToFunctions} from "../lib/functionEntry";
+import {PrimitiveTypes, linkFunctionTypesToFunctions, linkTypeIndexesToFunctions, linkFunctionBodiesToFunctions,FunctionSpace} from "../lib/functionEntry";
 
 it(`should parse sections`,() => {
     let dump = disassembleWat(fs.readFileSync("__tests__/add.wat").toString());
@@ -15,13 +15,14 @@ it(`should parse sections`,() => {
     expect(res.codeSection.contents.length).toBe(14);
     expect(res.exportSection.contents.length).toBe(8);
     expect(res.nameSection.contents.length).toBe(24);
-/*
-    let numImports = res.importSection.getNumberOfImports();
-    expect(numImports).toBe(0);
 
-    let functions = res.functionSection.getFunctionsWithTypeIndexes(numImports);
-    expect(functions.length).toBe(1);
-    expect(functions[0].typeIndex).toBe(0);
+
+    let functions : FunctionSpace = new FunctionSpace(
+        res.functionSection.initializeInternalFunctionSpace(),
+        res.importSection.initializeImportedFunctionSpace()
+    );
+    expect(functions.internal.length).toBe(1);
+    expect(functions.internal[0].typeIndex).toBe(0);
 
     let types = res.typeSection.findFunctionTypes();
     expect(types.length).toBe(1);
@@ -29,21 +30,20 @@ it(`should parse sections`,() => {
     expect(types[0].parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
     expect(types[0].result).toEqual(PrimitiveTypes.i32);
 
-    linkFunctionTypesToFunctions(functions,types);
-    expect(functions.length).toBe(1);
+    linkFunctionTypesToFunctions(functions.internal,types);
 
-    res.nameSection.nameFunctions(functions,numImports);
+    res.nameSection.nameFunctions(functions);
 
-    expect(functions[0].name).toBe("add");
-    expect(functions[0].functionIndex).toBe(0);
-    expect(functions[0].typeIndex).toBe(0);
-    expect(functions[0].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
-    expect(functions[0].type!.result).toBe(PrimitiveTypes.i32);
+    expect(functions.internal[0].name).toBe("add");
+    expect(functions.internal[0].functionIndex).toBe(0);
+    expect(functions.internal[0].typeIndex).toBe(0);
+    expect(functions.internal[0].type!.parameters).toEqual([PrimitiveTypes.i32,PrimitiveTypes.i32]);
+    expect(functions.internal[0].type!.result).toBe(PrimitiveTypes.i32);
 
     let bodies = res.codeSection.getFunctionBodies();
-    linkFunctionBodiesToFunctions(functions,bodies,numImports);
+    linkFunctionBodiesToFunctions(functions,bodies);
     
-    expect(functions[0].body).toEqual(
+    expect(functions.internal[0].body).toEqual(
 `0000021: 00                                        ; func body size (guess)
 0000022: 00                                        ; local decl count
 0000023: 20                                        ; get_local
@@ -53,5 +53,5 @@ it(`should parse sections`,() => {
 0000027: 6a                                        ; i32.add
 0000028: 0b                                        ; end
 0000021: 07                                        ; FIXUP func body size
-000001f: 09                                        ; FIXUP section size`.split(/\n/));*/
+000001f: 09                                        ; FIXUP section size`.split(/\n/));
 });
