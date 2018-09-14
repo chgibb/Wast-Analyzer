@@ -109,5 +109,5 @@ export function getFunctionByFunctionIndexOffsetByImportSpace(space : FunctionSp
                 return space.internal[i];
         }
     }
-    return undefined;
+    throw new Error(`Could not locate function index ${index}`);
 }

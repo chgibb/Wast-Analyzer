@@ -33,19 +33,16 @@ export class ImportSection implements Section
                 let entry : ImportedFunctionEntry = new ImportedFunctionEntry();
                 while(!/; FIXUP section size/.test(this.contents[i]))
                 {
-                    if(/; import kind/.test(this.contents[i]))
+
+                    if(/; import signature index/.test(this.contents[i]))
                     {
                         entry.typeIndex = hexToDec(this.contents[i].split(/\s/)[1]);
                     }
-
-                    else if(/; import signature index/.test(this.contents[i]))
-                    {
-                        entry.functionIndex = hexToDec(this.contents[i].split(/\s/)[1]);
-                    }
                     
-                    if(entry.typeIndex !== undefined && entry.functionIndex !== undefined)
+                    if(entry.typeIndex !== undefined)
                     {
                         res.push(entry);
+                        res[res.length - 1].functionIndex = res.length - 1;
                         break;
                     }
                     i++;

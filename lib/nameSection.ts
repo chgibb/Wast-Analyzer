@@ -39,10 +39,9 @@ export class NameSection implements Section
                             }
                         }
                     }
-
+                    
                     let entry = getFunctionByFunctionIndexOffsetByImportSpace(space,functionIndex);
-                    if(entry)
-                        entry.name = name;
+                    entry!.name = name;
                 }
             }
         }   
