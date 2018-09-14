@@ -24,6 +24,34 @@ export class FunctionEntry
     public name : string | undefined;
     public type : FunctionType | undefined;
     public body : Array<string> = new Array<string>();
+    private isStaticallyUnreachable : boolean | undefined = undefined;
+
+    public isUnreachable() : boolean | undefined
+    {
+        if(this.isStaticallyUnreachable === undefined)
+        {
+            throw new Error("Unreachability has not been determined yet");
+        }
+        else
+            return this.isStaticallyUnreachable;
+    }
+
+    public determineUnreachability() : void
+    {
+        if(!this.body)
+        {
+            throw new Error("Function body has not been linked yet");
+        }
+        for(let i = 0; i != this.body.length; ++i)
+        {
+            if(/; unreachable/.test(this.body[i]))
+            {
+                this.isStaticallyUnreachable = true;
+                return;
+            }
+        }
+        this.isStaticallyUnreachable = false;
+    }
 }
 
 export class ImportedFunctionEntry extends FunctionEntry
@@ -35,6 +63,7 @@ export class FunctionSpace
 {
     public imported : Array<ImportedFunctionEntry> = new Array<ImportedFunctionEntry>();
     public internal : Array<FunctionEntry> = new Array<FunctionEntry>();
+
     public constructor(
         internal : Array<FunctionEntry>,
         imported : Array<ImportedFunctionEntry>

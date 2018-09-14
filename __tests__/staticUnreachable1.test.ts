@@ -35,6 +35,8 @@ it(`should parse sections`,() => {
 
     expect(functions.internal[0].typeIndex).toBe(2);
     expect(functions.internal[0].name).toBe("~lib/math/NativeMath.sin");
+    functions.internal[0].determineUnreachability();
+    expect(functions.internal[0].isUnreachable()).toBe(true);
     expect(functions.internal[0].body).toEqual(
 `0000070: 00                                        ; func body size (guess)
 0000071: 00                                        ; local decl count
@@ -46,6 +48,8 @@ it(`should parse sections`,() => {
 
     expect(functions.internal[1].typeIndex).toBe(2);
     expect(functions.internal[1].name).toBe("~lib/math/NativeMath.cos");
+    functions.internal[1].determineUnreachability();
+    expect(functions.internal[1].isUnreachable()).toBe(true);
     expect(functions.internal[1].body).toEqual(
 `000007d: 00                                        ; func body size (guess)
 000007e: 00                                        ; local decl count
@@ -57,9 +61,13 @@ it(`should parse sections`,() => {
 
     expect(functions.internal[2].typeIndex).toBe(1);
     expect(functions.internal[2].name).toBe("main/addSinCos");
+    functions.internal[2].determineUnreachability();
+    expect(functions.internal[2].isUnreachable()).toBe(false);
 
     expect(functions.internal[3].typeIndex).toBe(0);
     expect(functions.internal[3].name).toBe("start");
+    functions.internal[3].determineUnreachability();
+    expect(functions.internal[3].isUnreachable()).toBe(false);
 
 });
     
